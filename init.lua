@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -102,7 +102,7 @@ vim.g.have_nerd_font = false
 vim.opt.number = true
 -- You can also add relative line numbers, for help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.opt.relativenumber = true
+vim.opt.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
@@ -154,6 +154,14 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
+-- indenting
+local o = vim.o
+o.expandtab = true
+o.shiftwidth = 2
+o.smartindent = true
+o.tabstop = 2
+o.softtabstop = 2
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -161,10 +169,17 @@ vim.opt.scrolloff = 10
 vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
+-- nvimtree keymaps
+vim.keymap.set('n', '<C-n>', '<cmd>NvimTreeToggle<CR>', { desc = 'Nvimtree Toggle window' })
+vim.keymap.set('n', '<leader>e', '<cmd>NvimTreeFocus<CR>', { desc = 'Nvimtree Focus window' })
+
+-- terminal keymaps
+vim.keymap.set('n', '<C-t>', '<cmd>ToggleTerm<CR>', { desc = 'Toggle terminal' })
+
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
-vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
+vim.keymap.set('n', '<leader>E', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
@@ -239,6 +254,93 @@ require('lazy').setup({
 
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
+  {
+    'nvim-tree/nvim-tree.lua',
+    cmd = { 'NvimTreeToggle', 'NvimTreeFocus' },
+    opts = {
+      filters = {
+        dotfiles = false,
+      },
+      disable_netrw = true,
+      hijack_netrw = true,
+      hijack_cursor = true,
+      hijack_unnamed_buffer_when_opening = false,
+      sync_root_with_cwd = true,
+      update_focused_file = {
+        enable = true,
+        update_root = false,
+      },
+      view = {
+        adaptive_size = false,
+        side = 'right',
+        width = 30,
+        preserve_window_proportions = true,
+      },
+      git = {
+        enable = true,
+        ignore = true,
+      },
+      filesystem_watchers = {
+        enable = true,
+      },
+      actions = {
+        open_file = {
+          resize_window = true,
+        },
+      },
+      renderer = {
+        root_folder_label = false,
+        highlight_git = true,
+        highlight_opened_files = 'none',
+
+        indent_markers = {
+          enable = true,
+        },
+
+        icons = {
+          show = {
+            file = true,
+            folder = true,
+            folder_arrow = true,
+            git = true,
+          },
+
+          glyphs = {
+            default = '󰈚',
+            symlink = '',
+            folder = {
+              default = '',
+              empty = '',
+              empty_open = '',
+              open = '',
+              symlink = '',
+              symlink_open = '',
+              arrow_open = '',
+              arrow_closed = '',
+            },
+            git = {
+              unstaged = '✗',
+              staged = '✓',
+              unmerged = '',
+              renamed = '➜',
+              untracked = '★',
+              deleted = '',
+              ignored = '◌',
+            },
+          },
+        },
+      },
+    },
+  },
+  { 'nvim-tree/nvim-web-devicons' },
+  { -- autopairs
+    'windwp/nvim-autopairs',
+    event = 'InsertEnter',
+    config = true,
+    -- use opts = {} for passing setup options
+    -- this is equalent to setup({}) function
+  },
+  { 'akinsho/toggleterm.nvim', version = '*', config = true },
 
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`. This is equivalent to the following lua:
